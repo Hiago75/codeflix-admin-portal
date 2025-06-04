@@ -1,5 +1,22 @@
-import Button from '@mui/material/Button';
+import { Box, createTheme, ThemeProvider } from '@mui/material';
+import Header from './components/Header';
+import Layout from './components/Layout';
+
+const theme = createTheme({})
 
 export const App = () => {
-  return <Button variant="contained">Hello world</Button>;
+  return (
+    <ThemeProvider theme={theme}>
+      <Box component="main"
+        sx={{
+          height: "100vh",
+        }}
+      >
+        <Header />
+        <Layout>
+          <h1>Test</h1>
+        </Layout>
+      </Box>
+    </ThemeProvider>
+  )
 }
