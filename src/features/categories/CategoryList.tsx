@@ -16,8 +16,18 @@ export default function CategoryList() {
   }))
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: renderNameCell
+    },
+    {
+      field: 'description',
+      headerName:
+        'Description',
+      flex: 1
+    },
     {
       field: 'isActive',
       headerName: 'Active?',
@@ -38,13 +48,24 @@ export default function CategoryList() {
     },
   ]
 
+  function renderNameCell(rowData: GridRenderCellParams) {
+    return (
+      <Link
+        style={{ textDecoration: "none" }}
+        to={`/categories/edit/${rowData.id}`}
+      >
+        <Typography color="primary">{rowData.value}</Typography>
+      </Link>
+    )
+  }
+
   function renderIsActiveCell(rowData: GridRenderCellParams) {
     return <Typography color={rowData.value ? "primary" : "secondary"}>
       {rowData.value ? "Active" : "Inactive"}
     </Typography>
   }
 
-  function renderActionCell(rowData: GridRenderCellParams) {
+  function renderActionCell(_: GridRenderCellParams) {
     return (
       <IconButton
         color="secondary"
@@ -69,7 +90,7 @@ export default function CategoryList() {
           New Category
         </Button>
       </Box>
-      <div style={{ height: 300, width: "100%" }}>
+      <Box style={{ display: "flex", height: 600 }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -78,7 +99,7 @@ export default function CategoryList() {
           disableColumnFilter={true}
           disableRowSelectionOnClick={true}
         />
-      </div>
+      </Box>
     </Box>
   )
 }
