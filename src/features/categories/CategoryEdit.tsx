@@ -1,14 +1,47 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { selectCategoryById } from "./categorySlice";
+import { Category, selectCategoryById, updateCategory } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 export default function CategoryEdit() {
+  const dispatch = useAppDispatch();
   const id = useParams().id as string;
-  const [isdisabled, _] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const category = useAppSelector((state) => selectCategoryById(state, id))
+  const [categoryState, setCategoryState] = useState<Category>({
+    id: "",
+    name: "",
+    is_active: false,
+    created_at: "",
+    deleted_at: "",
+    description: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setCategoryState({ ...categoryState, [name]: value })
+  }
+
+  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+
+    setCategoryState({ ...categoryState, [name]: checked })
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    dispatch(updateCategory(categoryState));
+  }
+
+  useEffect(() => {
+    if (category) {
+      setCategoryState(category);
+    }
+  }, [category]);
 
   return (
     <Box>
@@ -20,11 +53,11 @@ export default function CategoryEdit() {
         </Box>
         <CategoryForm
           isLoading={false}
-          category={category}
-          isdisabled={isdisabled}
-          handleSubmit={() => console.log("teste")}
-          handleChange={() => console.log('change')}
-          handleToggle={() => console.log("toggle")}
+          category={categoryState}
+          isdisabled={isDisabled}
+          handleSubmit={handleSubmit}
+          handleChange={handleChange}
+          handleToggle={handleToggle}
         />
       </Paper>
     </Box>
