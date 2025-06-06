@@ -4,12 +4,14 @@ import { useParams } from "react-router";
 import { Category, selectCategoryById, updateCategory } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useSnackbar } from "notistack";
 
 export default function CategoryEdit() {
   const dispatch = useAppDispatch();
   const id = useParams().id as string;
   const [isDisabled, setIsDisabled] = useState(false);
   const category = useAppSelector((state) => selectCategoryById(state, id))
+  const { enqueueSnackbar } = useSnackbar();
   const [categoryState, setCategoryState] = useState<Category>({
     id: "",
     name: "",
@@ -35,6 +37,9 @@ export default function CategoryEdit() {
     e.preventDefault();
 
     dispatch(updateCategory(categoryState));
+    enqueueSnackbar("Category updated successfully", {
+      variant: "success",
+    });
   }
 
   useEffect(() => {

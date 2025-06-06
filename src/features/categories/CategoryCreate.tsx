@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { Category, createCategory } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
 import { useAppDispatch } from "../../app/hooks";
+import { useSnackbar } from "notistack";
 
 export default function CategoryCreate() {
   const dispatch = useAppDispatch();
   const [isDisabled, _] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   const [category, setCategory] = useState<Category>({
     id: "",
     name: "",
@@ -32,6 +34,9 @@ export default function CategoryCreate() {
     e.preventDefault();
 
     dispatch(createCategory(category));
+    enqueueSnackbar("Category updated successfully", {
+      variant: "success",
+    });
   }
 
   useEffect(() => {
