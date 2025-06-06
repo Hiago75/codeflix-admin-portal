@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import Grid from '@mui/material/Grid';
 
-
 import { Link } from "react-router";
 import { Category } from "../categorySlice";
 
