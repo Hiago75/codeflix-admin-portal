@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { apiSlice } from "../api/apiSlice";
+import { Results } from "../../types/Category";
 
 export interface Category {
   id: string,
@@ -9,6 +11,17 @@ export interface Category {
   created_at: string;
   deleted_at: null | string;
 }
+
+const endpointUrl = "/categories";
+
+export const categoryApiSlice = apiSlice.injectEndpoints({
+  endpoints: ({ query }) => ({
+    getCategories: query<Results, void>({
+      query: () => `${endpointUrl}`,
+      providesTags: ["Categories"],
+    })
+  })
+})
 
 const categories: Category[] = [
   {
@@ -68,5 +81,9 @@ const categoriesSlice = createSlice({
 
 export const selectCategories = (state: RootState) => state.categories
 export const { createCategory, deleteCategory, updateCategory } = categoriesSlice.actions
+
+export const {
+  useGetCategoriesQuery
+} = categoryApiSlice
 
 export default categoriesSlice.reducer

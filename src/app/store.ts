@@ -1,11 +1,14 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
 import { configureStore } from "@reduxjs/toolkit"
 import categoriesReducer from '../features/categories/categorySlice'
+import { apiSlice } from "../features/api/apiSlice"
 
 export const store = configureStore({
   reducer: {
     categories: categoriesReducer,
-  }
+    [apiSlice.reducerPath]: apiSlice.reducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware)
 })
 
 export type AppStore = typeof store

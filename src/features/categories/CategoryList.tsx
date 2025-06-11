@@ -1,10 +1,14 @@
 import { Box, Button, IconButton, Typography } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { deleteCategory, selectCategories } from "./categorySlice"
+import { deleteCategory, selectCategories, useGetCategoriesQuery } from "./categorySlice"
 import { Link } from "react-router"
 import { DataGrid, GridColDef, GridDeleteIcon, GridRenderCellParams, GridRowsProp } from "@mui/x-data-grid"
 
 export default function CategoryList() {
+  const { data } = useGetCategoriesQuery();
+
+  console.log(data?.data)
+
   const categories = useAppSelector(selectCategories)
   const dispatch = useAppDispatch()
 

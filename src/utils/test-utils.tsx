@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 import type { PropsWithChildren, ReactElement } from "react"
 import { Provider } from "react-redux"
 import type { AppStore, RootState } from "../app/store"
-import { makeStore } from "../app/store"
+import { store } from "../app/store"
 
 /**
  * This type extends the default options for
@@ -48,7 +48,6 @@ export const renderWithProviders = (
   const {
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = makeStore(preloadedState),
     ...renderOptions
   } = extendedRenderOptions
 

@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 export default function CategoryEdit() {
   const dispatch = useAppDispatch();
   const id = useParams().id as string;
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled] = useState(false);
   const category = useAppSelector((state) => selectCategoryById(state, id))
   const [categoryState, setCategoryState] = useState<Category>({
     id: "",
