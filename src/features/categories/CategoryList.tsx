@@ -3,12 +3,10 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { deleteCategory, selectCategories } from "./categorySlice"
 import { Link } from "react-router"
 import { DataGrid, GridColDef, GridDeleteIcon, GridRenderCellParams, GridRowsProp } from "@mui/x-data-grid"
-import { useSnackbar } from "notistack"
 
 export default function CategoryList() {
   const categories = useAppSelector(selectCategories)
   const dispatch = useAppDispatch()
-  const { enqueueSnackbar } = useSnackbar();
 
   const rows: GridRowsProp = categories.map((category) => ({
     id: category.id,
@@ -71,9 +69,6 @@ export default function CategoryList() {
 
   function handleDeleteClick(id: string) {
     dispatch(deleteCategory(id))
-    enqueueSnackbar("Category deleted successfully", {
-      variant: "info",
-    });
   }
 
   function renderActionCell(params: GridRenderCellParams) {
