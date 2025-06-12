@@ -1,24 +1,19 @@
 import { Box, Button, IconButton, Typography } from "@mui/material"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { deleteCategory, selectCategories, useGetCategoriesQuery } from "./categorySlice"
+import { useDeleteCategoryMutation, useGetCategoriesQuery } from "./categorySlice"
 import { Link } from "react-router"
 import { DataGrid, GridColDef, GridDeleteIcon, GridRenderCellParams, GridRowsProp } from "@mui/x-data-grid"
 
 export default function CategoryList() {
-  const { data } = useGetCategoriesQuery();
+  const { data: categories } = useGetCategoriesQuery();
+  const [deleteCategory, deleteCategoryStatus] = useDeleteCategoryMutation();
 
-  console.log(data?.data)
-
-  const categories = useAppSelector(selectCategories)
-  const dispatch = useAppDispatch()
-
-  const rows: GridRowsProp = categories.map((category) => ({
+  const rows: GridRowsProp = categories ? categories.items.map((category) => ({
     id: category.id,
     name: category.name,
     description: category.description,
     isActive: category.is_active,
     createdAt: new Date(category.created_at).toLocaleDateString('pt-BR')
-  }))
+  })) : []
 
   const columns: GridColDef[] = [
     {
@@ -60,7 +55,7 @@ export default function CategoryList() {
         style={{ textDecoration: "none" }}
         to={`/categories/edit/${rowData.id}`}
       >
-        <Typography color="primary">{rowData.value}</Typography>
+        <Typography color="primary" style={{ display: 'inline-block' }}>{rowData.value}</Typography>
       </Link>
     )
   }
@@ -71,8 +66,8 @@ export default function CategoryList() {
     </Typography>
   }
 
-  function handleDeleteClick(id: string) {
-    dispatch(deleteCategory(id))
+  async function handleDeleteClick(id: string) {
+    deleteCategory({ id });
   }
 
   function renderActionCell(params: GridRenderCellParams) {

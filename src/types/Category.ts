@@ -2,7 +2,7 @@ export interface Results {
   current_page: number;
   per_page: number;
   total: number;
-  data: Category[];
+  items: Category[];
 }
 
 export interface Category {

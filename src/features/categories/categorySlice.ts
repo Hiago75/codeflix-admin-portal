@@ -14,11 +14,22 @@ export interface Category {
 
 const endpointUrl = "/categories";
 
+const deleteCategoryQuery = (category: Category) => {
+  return {
+    url: `${endpointUrl}/${category.id}`,
+    method: "DELETE"
+  }
+}
+
 export const categoryApiSlice = apiSlice.injectEndpoints({
-  endpoints: ({ query }) => ({
+  endpoints: ({ query, mutation }) => ({
     getCategories: query<Results, void>({
       query: () => `${endpointUrl}`,
       providesTags: ["Categories"],
+    }),
+    deleteCategory: mutation<void, { id: string }>({
+      query: deleteCategoryQuery,
+      invalidatesTags: ["Categories"]
     })
   })
 })
@@ -83,7 +94,8 @@ export const selectCategories = (state: RootState) => state.categories
 export const { createCategory, deleteCategory, updateCategory } = categoriesSlice.actions
 
 export const {
-  useGetCategoriesQuery
+  useGetCategoriesQuery,
+  useDeleteCategoryMutation
 } = categoryApiSlice
 
 export default categoriesSlice.reducer
