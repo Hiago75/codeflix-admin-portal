@@ -7,10 +7,12 @@ import Layout from './components/Layout';
 import CategoryList from './features/categories/CategoryList';
 import CategoryCreate from './features/categories/CategoryCreate';
 import CategoryEdit from './features/categories/CategoryEdit';
+import { ToastContainer } from 'react-toastify';
 
 export const App = () => {
   return (
     <ThemeProvider theme={appTheme}>
+      <ToastContainer />
       <Box component="main"
         sx={{
           height: "100vh",

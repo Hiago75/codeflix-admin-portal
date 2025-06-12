@@ -2,6 +2,8 @@ import { Box, Button, IconButton, Typography } from "@mui/material"
 import { useDeleteCategoryMutation, useGetCategoriesQuery } from "./categorySlice"
 import { Link } from "react-router"
 import { DataGrid, GridColDef, GridDeleteIcon, GridRenderCellParams, GridRowsProp } from "@mui/x-data-grid"
+import { useEffect } from "react";
+import ToasterSystem from "../../utils/ToasterSystem";
 
 export default function CategoryList() {
   const { data: categories } = useGetCategoriesQuery();
@@ -66,15 +68,26 @@ export default function CategoryList() {
     </Typography>
   }
 
-  async function handleDeleteClick(id: string) {
+  async function handleDeleteCategory(id: string) {
     deleteCategory({ id });
   }
+
+  useEffect(() => {
+    if (deleteCategoryStatus.isSuccess) {
+      ToasterSystem.success("Category deleted")
+    }
+
+    if (deleteCategoryStatus.error) {
+      ToasterSystem.error("Category not deleted")
+    }
+
+  }, [deleteCategoryStatus])
 
   function renderActionCell(params: GridRenderCellParams) {
     return (
       <IconButton
         color="secondary"
-        onClick={() => handleDeleteClick(params.value)}
+        onClick={() => handleDeleteCategory(params.value)}
         aria-label="delete"
       >
         <GridDeleteIcon />
