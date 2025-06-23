@@ -1,98 +1,32 @@
-import { Box, Button, IconButton, Typography } from "@mui/material"
+import { Box, Button } from "@mui/material"
 import { useDeleteCategoryMutation, useGetCategoriesQuery } from "./categorySlice"
 import { Link } from "react-router"
-import { DataGrid, GridColDef, GridDeleteIcon, GridRenderCellParams, GridRowsProp } from "@mui/x-data-grid"
-import { useEffect } from "react";
-import ToasterSystem from "../../utils/ToasterSystem";
+import { CategoriesTable } from "./components/CategoryTable";
+import { GridFilterModel, GridPaginationModel } from "@mui/x-data-grid";
+import { useState } from "react";
 
 export default function CategoryList() {
-  const { data: categories } = useGetCategoriesQuery();
-  const [deleteCategory, deleteCategoryStatus] = useDeleteCategoryMutation();
+  const [perPage] = useState(10)
+  const [rowsPerPage] = useState([10, 20, 30])
+  const [search, setSearch] = useState("")
 
-  const rows: GridRowsProp = categories ? categories.items.map((category) => ({
-    id: category.id,
-    name: category.name,
-    description: category.description,
-    isActive: category.is_active,
-    createdAt: new Date(category.created_at).toLocaleDateString('pt-BR')
-  })) : []
-
-  const columns: GridColDef[] = [
-    {
-      field: 'name',
-      headerName: 'Name',
-      flex: 1,
-      renderCell: renderNameCell
-    },
-    {
-      field: 'description',
-      headerName:
-        'Description',
-      flex: 1
-    },
-    {
-      field: 'isActive',
-      headerName: 'Active?',
-      flex: 1,
-      type: "boolean",
-      renderCell: renderIsActiveCell
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Created at',
-      flex: 1
-    },
-    {
-      field: 'id',
-      headerName: 'Actions',
-      type: "string",
-      flex: 1,
-      renderCell: renderActionCell
-    },
-  ]
-
-  function renderNameCell(rowData: GridRenderCellParams) {
-    return (
-      <Link
-        style={{ textDecoration: "none" }}
-        to={`/categories/edit/${rowData.id}`}
-      >
-        <Typography color="primary" style={{ display: 'inline-block' }}>{rowData.value}</Typography>
-      </Link>
-    )
-  }
-
-  function renderIsActiveCell(rowData: GridRenderCellParams) {
-    return <Typography color={rowData.value ? "primary" : "secondary"}>
-      {rowData.value ? "Active" : "Inactive"}
-    </Typography>
-  }
+  const { data: categories, isFetching } = useGetCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   async function handleDeleteCategory(id: string) {
     deleteCategory({ id });
   }
 
-  useEffect(() => {
-    if (deleteCategoryStatus.isSuccess) {
-      ToasterSystem.success("Category deleted")
-    }
+  function handleOnPageChange(page: GridPaginationModel) {
+    console.log("pageChange")
+  }
 
-    if (deleteCategoryStatus.error) {
-      ToasterSystem.error("Category not deleted")
-    }
+  function handleFilterChange(filterModel: GridFilterModel) {
+    console.log("filterChange")
+  }
 
-  }, [deleteCategoryStatus])
-
-  function renderActionCell(params: GridRenderCellParams) {
-    return (
-      <IconButton
-        color="secondary"
-        onClick={() => handleDeleteCategory(params.value)}
-        aria-label="delete"
-      >
-        <GridDeleteIcon />
-      </IconButton>
-    )
+  function handleOnPageSizeChange(perPage: number) {
+    console.log("pageSizeChange")
   }
 
   return (
@@ -108,14 +42,16 @@ export default function CategoryList() {
           New Category
         </Button>
       </Box>
-      <Box style={{ display: "flex", height: 600 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          showToolbar={true}
-          disableColumnSelector={true}
-          disableColumnFilter={true}
-          disableRowSelectionOnClick={true}
+      <Box>
+        <CategoriesTable
+          data={categories}
+          isFetching={isFetching}
+          perPage={perPage}
+          rowsPerPage={rowsPerPage}
+          handleOnPageChange={handleOnPageChange}
+          handleFilterChange={handleFilterChange}
+          handleOnPageSizeChange={handleOnPageSizeChange}
+          handleDeleteCategory={handleDeleteCategory}
         />
       </Box>
     </Box>
