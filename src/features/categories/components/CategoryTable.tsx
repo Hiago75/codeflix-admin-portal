@@ -6,12 +6,12 @@ import { Link } from "react-router"
 type CategoriesTableProps = {
   data: Results | undefined;
   perPage: number;
+  page: number;
   isFetching: boolean;
   rowsPerPage?: number[];
 
   handleOnPageChange: (page: GridPaginationModel) => void;
   handleFilterChange: (filterModel: GridFilterModel) => void;
-  handleOnPageSizeChange: (perPage: number) => void;
   handleDeleteCategory: (id: string) => void;
 }
 
@@ -24,6 +24,7 @@ type RowsProps = {
 
 export function CategoriesTable({
   data,
+  page,
   perPage,
   isFetching,
   rowsPerPage,
@@ -116,7 +117,7 @@ export function CategoriesTable({
     pageSizeOptions: rowsPerPage,
     paginationModel: {
       pageSize: perPage,
-      page: 0
+      page: page
     },
     onPaginationModelChange: handleOnPageChange,
     filterMode: 'server',
@@ -128,7 +129,7 @@ export function CategoriesTable({
   } as const;
 
   return (
-    <Box sx={{ display: "flex", height: 600, width: 1 }}>
+    <Box sx={{ display: "flex", height: 683, width: 1 }}>
       <DataGrid
         rows={rows}
         columns={columns}

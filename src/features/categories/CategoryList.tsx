@@ -6,11 +6,13 @@ import { GridFilterModel, GridPaginationModel } from "@mui/x-data-grid";
 import { useState } from "react";
 
 export default function CategoryList() {
-  const [perPage] = useState(10)
+  const [page, setPage] = useState(0)
+  const [perPage, setPerPage] = useState(10)
   const [rowsPerPage] = useState([10, 20, 30])
   const [search, setSearch] = useState("")
 
-  const { data: categories, isFetching } = useGetCategoriesQuery();
+  const options = { perPage, search, page }
+  const { data: categories, isFetching } = useGetCategoriesQuery(options);
   const [deleteCategory] = useDeleteCategoryMutation();
 
   async function handleDeleteCategory(id: string) {
@@ -18,15 +20,17 @@ export default function CategoryList() {
   }
 
   function handleOnPageChange(page: GridPaginationModel) {
-    console.log("pageChange")
+    setPage(page.page)
+    setPerPage(page.pageSize)
   }
 
   function handleFilterChange(filterModel: GridFilterModel) {
-    console.log("filterChange")
-  }
+    if (filterModel.quickFilterValues?.length) {
+      const search = filterModel.quickFilterValues.join("")
+      setSearch(search);
+    }
 
-  function handleOnPageSizeChange(perPage: number) {
-    console.log("pageSizeChange")
+    setSearch("")
   }
 
   return (
@@ -47,10 +51,10 @@ export default function CategoryList() {
           data={categories}
           isFetching={isFetching}
           perPage={perPage}
+          page={page}
           rowsPerPage={rowsPerPage}
           handleOnPageChange={handleOnPageChange}
           handleFilterChange={handleFilterChange}
-          handleOnPageSizeChange={handleOnPageSizeChange}
           handleDeleteCategory={handleDeleteCategory}
         />
       </Box>

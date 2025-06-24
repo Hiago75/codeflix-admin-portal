@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
-import { Results } from "../../types/Category";
+import { CategoryParams, Results } from "../../types/Category";
 
 export interface Category {
   id: string,
@@ -14,6 +14,30 @@ export interface Category {
 
 const endpointUrl = "/categories";
 
+function parseQueryParams(params: CategoryParams) {
+  const query = new URLSearchParams();
+
+  if (params.page) {
+    query.append("page", params.page.toString());
+  }
+
+  if (params.perPage) {
+    query.append("perPage", params.perPage.toString());
+  }
+
+  if (params.search) {
+    query.append("search", params.search);
+  }
+
+  return query.toString();
+}
+
+function getCategoryQuery({ page = 0, perPage = 10, search = "" }) {
+  const params = { page, perPage, search }
+
+  return `${endpointUrl}?${parseQueryParams(params)}`
+}
+
 const deleteCategoryQuery = (category: Category) => {
   return {
     url: `${endpointUrl}/${category.id}`,
@@ -23,8 +47,8 @@ const deleteCategoryQuery = (category: Category) => {
 
 export const categoryApiSlice = apiSlice.injectEndpoints({
   endpoints: ({ query, mutation }) => ({
-    getCategories: query<Results, void>({
-      query: () => `${endpointUrl}`,
+    getCategories: query<Results, CategoryParams>({
+      query: getCategoryQuery,
       providesTags: ["Categories"],
     }),
     deleteCategory: mutation<void, { id: string }>({
