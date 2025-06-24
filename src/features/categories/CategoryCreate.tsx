@@ -1,12 +1,13 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Category, createCategory } from "./categorySlice";
+import { Category, useCreateCategoryMutation } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
 import { useAppDispatch } from "../../app/hooks";
 
 export default function CategoryCreate() {
   const dispatch = useAppDispatch();
-  const [isDisabled, _] = useState(false);
+  const [createCategory, status] = useCreateCategoryMutation();
+  const [isDisabled] = useState(false);
   const [category, setCategory] = useState<Category>({
     id: "",
     name: "",

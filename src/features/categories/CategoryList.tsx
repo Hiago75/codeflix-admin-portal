@@ -1,9 +1,10 @@
-import { Box, Button } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import { useDeleteCategoryMutation, useGetCategoriesQuery } from "./categorySlice"
 import { Link } from "react-router"
 import { CategoriesTable } from "./components/CategoryTable";
 import { GridFilterModel, GridPaginationModel } from "@mui/x-data-grid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ToasterSystem from "../../utils/ToasterSystem";
 
 export default function CategoryList() {
   const [page, setPage] = useState(0)
@@ -12,8 +13,8 @@ export default function CategoryList() {
   const [search, setSearch] = useState("")
 
   const options = { perPage, search, page }
-  const { data: categories, isFetching } = useGetCategoriesQuery(options);
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const { data: categories, isFetching, error } = useGetCategoriesQuery(options);
+  const [deleteCategory, deleteCategoryStatus] = useDeleteCategoryMutation();
 
   async function handleDeleteCategory(id: string) {
     deleteCategory({ id });
@@ -31,6 +32,20 @@ export default function CategoryList() {
     }
 
     setSearch("")
+  }
+
+  useEffect(() => {
+    if (deleteCategoryStatus.isSuccess) {
+      ToasterSystem.success('Category deleted')
+    }
+
+    if (deleteCategoryStatus.error) {
+      ToasterSystem.error("Category not deleted")
+    }
+  }, [deleteCategoryStatus, ToasterSystem])
+
+  if (error) {
+    return <Typography>Error fetching categories</Typography>
   }
 
   return (
