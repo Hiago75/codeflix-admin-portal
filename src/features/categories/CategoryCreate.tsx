@@ -2,12 +2,11 @@ import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Category, useCreateCategoryMutation } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
-import { useAppDispatch } from "../../app/hooks";
+import ToasterSystem from "../../utils/ToasterSystem";
 
 export default function CategoryCreate() {
-  const dispatch = useAppDispatch();
   const [createCategory, status] = useCreateCategoryMutation();
-  const [isDisabled] = useState(false);
+  const [isDisabled, setIsDisable] = useState(false);
   const [category, setCategory] = useState<Category>({
     id: "",
     name: "",
@@ -29,17 +28,24 @@ export default function CategoryCreate() {
     setCategory({ ...category, [name]: checked })
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    dispatch(createCategory(category));
+    await createCategory(category);
+
+
   }
 
   useEffect(() => {
-    if (category) {
-      setCategory(category);
+    if (status.isSuccess) {
+      ToasterSystem.success("Category created successfully")
+      setIsDisable(true);
     }
-  }, [category]);
+
+    if (status.error) {
+      ToasterSystem.error("Category not created")
+    }
+  }, [ToasterSystem, status.error, status.isSuccess]);
 
   return (
     <Box>
