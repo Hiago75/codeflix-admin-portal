@@ -32,13 +32,13 @@ function parseQueryParams(params: CategoryParams) {
   return query.toString();
 }
 
-function getCategoryQuery({ page = 0, perPage = 10, search = "" }) {
+function getCategories({ page = 0, perPage = 10, search = "" }) {
   const params = { page, perPage, search }
 
   return `${endpointUrl}?${parseQueryParams(params)}`
 }
 
-const deleteCategoryMutation = (category: Category) => {
+function deleteCategoryMutation(category: Category) {
   return {
     url: `${endpointUrl}/${category.id}`,
     method: "DELETE"
@@ -49,11 +49,27 @@ function createCategoryMutation(category: Category) {
   return { url: endpointUrl, method: "POST", body: category }
 }
 
+function updateCategoryMutation(category: Category) {
+  return {
+    url: `${endpointUrl}/${category.id}`,
+    method: "PUT",
+    body: category
+  }
+}
+
+function getCategoryQuery({ id }: { id: string }) {
+  return `${endpointUrl}/${id}`
+}
+
 export const categoryApiSlice = apiSlice.injectEndpoints({
   endpoints: ({ query, mutation }) => ({
     getCategories: query<Results, CategoryParams>({
-      query: getCategoryQuery,
+      query: getCategories,
       providesTags: ["Categories"],
+    }),
+    getCategory: query<Category, { id: string }>({
+      query: getCategoryQuery,
+      providesTags: ["Categories"]
     }),
     createCategory: mutation<Results, Category>({
       query: createCategoryMutation,
@@ -61,6 +77,10 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
     }),
     deleteCategory: mutation<void, { id: string }>({
       query: deleteCategoryMutation,
+      invalidatesTags: ["Categories"]
+    }),
+    updateCategory: mutation<Results, Category>({
+      query: updateCategoryMutation,
       invalidatesTags: ["Categories"]
     })
   })
@@ -128,7 +148,9 @@ export const { createCategory, deleteCategory, updateCategory } = categoriesSlic
 export const {
   useGetCategoriesQuery,
   useDeleteCategoryMutation,
-  useCreateCategoryMutation
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useGetCategoryQuery
 } = categoryApiSlice
 
 export default categoriesSlice.reducer

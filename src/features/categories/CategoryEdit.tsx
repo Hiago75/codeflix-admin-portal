@@ -1,15 +1,15 @@
 import { Box, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Category, selectCategoryById, updateCategory } from "./categorySlice";
+import { Category, useUpdateCategoryMutation, useGetCategoryQuery } from "./categorySlice";
 import CategoryForm from "./components/CategoryForm";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import ToasterSystem from "../../utils/ToasterSystem";
 
 export default function CategoryEdit() {
-  const dispatch = useAppDispatch();
   const id = useParams().id as string;
-  const [isDisabled] = useState(false);
-  const category = useAppSelector((state) => selectCategoryById(state, id))
+  const { data: category } = useGetCategoryQuery({ id })
+
+  const [updateCategory, status] = useUpdateCategoryMutation();
   const [categoryState, setCategoryState] = useState<Category>({
     id: "",
     name: "",
@@ -34,7 +34,7 @@ export default function CategoryEdit() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    dispatch(updateCategory(categoryState));
+    updateCategory(categoryState);
   }
 
   useEffect(() => {
@@ -42,6 +42,16 @@ export default function CategoryEdit() {
       setCategoryState(category);
     }
   }, [category]);
+
+  useEffect(() => {
+    if (status.isSuccess) {
+      ToasterSystem.success("Category updated successfully")
+    }
+
+    if (status.error) {
+      ToasterSystem.error("Category not updated")
+    }
+  }, [ToasterSystem, status.error, status.isSuccess])
 
   return (
     <Box>
@@ -54,7 +64,7 @@ export default function CategoryEdit() {
         <CategoryForm
           isLoading={false}
           category={categoryState}
-          isdisabled={isDisabled}
+          isdisabled={status.isLoading}
           handleSubmit={handleSubmit}
           handleChange={handleChange}
           handleToggle={handleToggle}
